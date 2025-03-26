@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Process Image</title>
+  <style>
+      .process-container {
+          max-width: 400px;
+          margin: 0 auto;
+          text-align: center;
+      }
+      .hidden {
+          display: none;
+      }
+      .form-check-input:checked {
+          background-color: #4CAF50;
+          border-color: #4CAF50;
+      }
+  </style>
+</head>
+<body class="container mt-5">
+  <div class="process-container">
+      <h1 class="mb-4">Image Processing Options</h1>
+      <form action="" method="POST">
+          <div class="mb-3">
+              <label for="operation">Operation:</label>
+              <select name="operation" class="form-select" id="operation-select">
+                  <option value="resize">Resize</option>
+                  <option value="compress">Compress</option>
+                  <option value="color_scale">Color Scale</option>
+                  <option value="edge_detection">Edge Detection</option>
+                  <option value="face_blur">Face Blur (Privacy Filter)</option>
+              </select>
+          </div>
+
+          <!-- Dimensions Input (used for Resize and for Color Scale) -->
+          <div id="dimensions-section" class="mb-3">
+              <label for="width">Width:</label>
+              <input type="number" name="width" class="form-control" id="width-input">
+              <label for="height" class="mt-2">Height:</label>
+              <input type="number" name="height" class="form-control" id="height-input">
+          </div>
+
+          <!-- Checkbox for keeping original size  -->
+          <div id="keep-original-section" class="form-check mb-3 hidden">
+              <input class="form-check-input" type="checkbox" name="keep_original_size" id="keepOriginalSize">
+              <label class="form-check-label" for="keepOriginalSize">
+                  Keep original size
+              </label>
+          </div>
+
+          <!-- Color Options for Color Scale -->
+          <div id="color-options" class="mb-3 hidden">
+              <label for="color_scale">Color Scale:</label>
+              <select name="color_scale" class="form-select">
+                  <option value="gray">Grayscale</option>
+                  <option value="red">Red Channel</option>
+                  <option value="green">Green Channel</option>
+                  <option value="blue">Blue Channel</option>
+              </select>
+          </div>
+
+          <!--  For Compression   -->
+          <div id="compression-section" class="mb-3 hidden">
+               <label for="compression_quality">Compression Quality (1-100):</label>
+               <input type="number" name="compression_quality" class="form-control" id="compression-quality-input" min="1" max="100" value="70">
+              <small class="text-muted">
+                Higher values (80-100) keep more details but result in larger files.
+                Lower values (1-40) create smaller files but may reduce image quality.
+             </small>
+          </div>
+
+          <button type="submit" class="btn btn-success" style="width: 150px;">Process</button>
+      </form>
+  </div>
+
+ <script>
+      const operationSelect = document.getElementById('operation-select');
+      const keepOriginalSizeCheckbox = document.getElementById('keepOriginalSize');
+      const sections = {
+          dimensions: document.getElementById('dimensions-section'),
+          keepOriginal: document.getElementById('keep-original-section'),
+          colorOptions: document.getElementById('color-options'),
+          compression: document.getElementById('compression-section')
+      };
+
+      function update() {
+          const selectedOperation = operationSelect.value;
+          Object.values(sections).forEach(section => section.classList.add('hidden'));
+
+          if (selectedOperation === 'resize') {
+              sections.dimensions.classList.remove('hidden');
+          } else if (selectedOperation === 'color_scale') {
+              sections.keepOriginal.classList.remove('hidden');
+              sections.colorOptions.classList.remove('hidden');
+              if (!keepOriginalSizeCheckbox.checked) {
+                  sections.dimensions.classList.remove('hidden');
+              }
+          } else if (selectedOperation === 'compress') {
+              sections.compression.classList.remove('hidden');
+          }
+      }
+
+      operationSelect.addEventListener('change', update);
+      keepOriginalSizeCheckbox.addEventListener('change', update);
+      update();
+  </script>
+
+</body>
+</html>
+
